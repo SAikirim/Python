@@ -10,10 +10,10 @@ reslut = [0, 0], [0,0], [0, 0]
 num=[4,2], [1, 3], [1, 1]
 print(0/1)
 for i in range(3):
-    if num[i][0] == num[i][1] + num[2-(i%1)][1]:
+    if num[i][0] == num[1-round(i/2)][1] + num[2-(i%1)][1]:
         reslut[i][0] = num[1][1]
         reslut[i][1] = num[2][1]
-        print(reslut, sep="\n")
+        print(reslut )
     else:
         print(0)
         break
