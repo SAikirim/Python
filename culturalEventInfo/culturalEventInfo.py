@@ -12,6 +12,7 @@ class CustomJSONEncoder(JSONEncoder):
 
         return JSONEncoder.default(self, obj)
 
+
 def get_prefernce(user_id):
     user = current_app.database.execute(text("""
         SELECT
@@ -57,6 +58,7 @@ def insert_prefernce(user):
 
 def create_app(test_config = None):
     app = Flask(__name__)
+    app.run(host = '0.0.0.0', port = 8080)
 
     app.json_encoder = CustomJSONEncoder
 
@@ -76,8 +78,9 @@ def create_app(test_config = None):
     def preference():
         new_prefernce    = request.json
         new_prefernce_id = insert_prefernce(new_prefernce)
-        #new_prefernce    = get_prefernce(new_prefernce_id)
+        new_prefernce    = get_prefernce(new_prefernce_id)
 
         return jsonify(new_prefernce)
 
     return app
+
