@@ -1,0 +1,45 @@
+﻿---
+CREATE TABLE users(
+id int not null auto_increment,
+name varchar(255) Not null,
+email Varchar(255) not Null,
+hashed_password Varchar(255) NOt null,
+profile VARCHAR(2000) NOT NULL,
+created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+PRIMARY Key (id),
+UNIQUE key email (email)
+);
+---
+* AUTO_INCREMENT
+  - 해당 칼럼의 값이 자동으로 1씩 증가됨 
+
+* DEFAULT CURRENT_TIMESTAMP
+  - 해당 칼럼의 값이 없으면 디폴트 값으로 현대 시간(TIMESTAMP) 값을 사용
+
+* ON UPDATE CURRENT_TIMESTAMP
+  - 해당 로우 값이 업데이트하면, 해당 칼럼의 값을 수정함(수정이 이루어지는 시간으로 수정)
+* UNIQUE KEY
+  -  값이 중복되면 안 됨
+
+---
+CREATE TABLE users_follow_list(
+user_id INT not null,
+follow_user_id INT NOT NULL,
+created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY (user_id, follow_user_id),
+CONSTRAINT users_follow_list_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id),
+CONSTRAINT users_follow_list_follow_user_id_fkey FOREIGN KEY (follow_user_id) REFERENCES users(id)
+);
+---
+
+---
+CREATE TABLE tweets(
+id INT NOT NULL AUTO_INCREMENT,
+user_id INT NOT NULL,
+tweet VARCHAR(300) NOT NULL,
+created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY (id),
+CONSTRAINT tweets_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id)
+);
+---
