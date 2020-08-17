@@ -3,11 +3,13 @@ use CEpreference
 ---
 CREATE TABLE preference(
 id int not null auto_increment,
+codename VARCHAR(25) DEFAULT NULL,
+desired_date date DEFAULT NULL,
+time VARCHAR(14) DEFAULT NULL,
+place VARCHAR(30 DEFAUlT NULL,
 age VARCHAR(14) DEFAULT NULL,
 gender Varchar(10) DEFAULT NULL,
-desired_date date DEFAULT NULL,
-time VARCHAR(12) DEFAULT NULL,
-jenre VARCHAR(25) DEFAULT NULL,
+use_fee VARCHAR(10) DEFAULT NUIL,
 keyword VARCHAR(255) DEFAULT NULL,
 PRIMARY Key (id)
 );
