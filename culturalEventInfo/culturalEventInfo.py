@@ -16,11 +16,13 @@ class CustomJSONEncoder(JSONEncoder):
 def get_prefernce(user_id):
     user = current_app.database.execute(text("""
         SELECT
-            age,
             gender,
+            codename,
             desired_date,
             time,
-            jenre,
+            use_trgt,
+            use_fee,
+            gcode,
             keyword
         FROM preference
         WHERE id = :user_id
@@ -29,11 +31,13 @@ def get_prefernce(user_id):
     }).fetchone()
 
     return {
-        'age'           : user['age'],
         'gender'        : user['gender'],
+        'codename'      : user['codename'],
         'desired_date'  : user['desired_date'],
         'time'          : user['time'],
-        'jenre'         : user['jenre'],
+        'use_trgt'      : user['use_trgt],
+        'use_fee'       : user['use_fee'],
+        'gcode'         : user['gcode'],
         'keyword'       : user['keyword']
     } if user else None
 
