@@ -77,7 +77,8 @@ keyword=피아노
 ---
 
 ## 실행
-$ FLASK_ENV=development FKAS_APP=culturalEventInfo.py flask run
+$ FLASK_ENV=development FLASK_APP=culturalEventInfo.py flask run
+$ FLASK_ENV=development FLASK_APP=cei.py flask run
 
 
 ## 딕셔너리 정보로 변환
