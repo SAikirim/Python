@@ -78,3 +78,23 @@ keyword=피아노
 
 ## 실행
 $ FLASK_ENV=development FKAS_APP=culturalEventInfo.py flask run
+
+
+## 딕셔너리 정보로 변환
+'CODENAME'	: user['CODENAME'],
+'TITLE'   	: user['TITLE'],
+'DATE'	: user['DATE'], 
+'PLACE'	: user['PLACE'],
+'ORG_NAME'	: user['ORG_NAME'], 
+'USE_TRGT'	: user['USE_TRGT'],
+'USE_FEE'	: user['USE_FEE'],
+'PLAYER'	: user['PLAYER],
+'PROGRAM'	: user['PROGRAM'],
+'ETC_DESC'	: user['ETC_DESC'],
+'ORG_LINK'	: user['ORG_LINK'],
+'MAIN_IMG'	: user['MAIN_IMG'],
+'RGSTDATE'	: user['RGSTDATE'],
+'TICKET'	: user['TICKET'],
+'STRTDATE'	: user['TICKET'],
+'END_DATE'	: user['END_DATE'],
+'THEMECODE'	: user['THEMECODE']
