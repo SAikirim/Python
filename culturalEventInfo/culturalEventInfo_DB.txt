@@ -1,6 +1,14 @@
-﻿create database CEpreference;
+## db 설정
+$ mysql_secure_installation	# root 암호 설정
+* db 접속후
+select user, plugin, host From mysql.user;	# 계정 확인
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';	# 비밀번호 사용하는 인증모드로 변경
+FLUSH PRIVILEGES;
+
+create database CEpreference;
 use CEpreference
----
+
+```
 CREATE TABLE preference(
 id int not null auto_increment,
 gender Varchar(10) DEFAULT NULL,
@@ -13,11 +21,12 @@ gcode VARCHAR(20) DEFAULT NULL,
 keyword VARCHAR(255) DEFAULT NULL
 PRIMARY Key (id)
 );
----
+```
 explain preference;
 
+### 참고
 * AUTO_INCREMENT
-  - 해당 칼럼의 값이 자동으로 1씩 증가됨 
+  - 해당 칼럼의 값이 자동으로 1씩 증가됨
 
 * DEFAULT CURRENT_TIMESTAMP
   - 해당 칼럼의 값이 없으면 디폴트 값으로 현대 시간(TIMESTAMP) 값을 사용
@@ -27,6 +36,36 @@ explain preference;
 * UNIQUE KEY
   -  값이 중복되면 안 됨
 
+## DB 새 설정
+create database cultural_event;
+use cultural_event;
+
+```
+CREATE TABLE origin_cultural_event_info(
+id int not null auto_increment,
+CODENAME VARCHAR(255) DEFAULT NULL,
+TITLE VARCHAR(255) DEFAULT NULL,
+DATE VARCHAR(255) DEFAULT NULL,
+PLACE VARCHAR(255) DEFAULT NULL,
+ORG_NAME VARCHAR(255) DEFAULT NULL,
+USE_TRGT VARCHAR(255) DEFAULT NULL,
+USE_FEE VARCHAR(255) DEFAULT NULL,
+PLAYER VARCHAR(255) DEFAULT NULL,
+PROGRAM VARCHAR(255) DEFAULT NULL,
+ETC_DESC VARCHAR(255) DEFAULT NULL,
+ORG_LINK VARCHAR(255) DEFAULT NULL,
+MAIN_IMG VARCHAR(255) DEFAULT NULL,
+RGSTDATE DATE DEFAULT NULL,
+TICKET VARCHAR(255) DEFAULT NULL,
+STRTDATE DATETIME DEFAULT NULL,
+END_DATE DATETIME DEFAULT NULL,
+THEMECODE VARCHAR(255) DEFAULT NULL,	
+PRIMARY Key (id)
+);
+```
+explain origin_cultural_event_info;
+
+### 데이터 값 예
 ---
 http -v POST http://localhost:5000/prefernce \
 age=성인 \
