@@ -76,7 +76,7 @@ def get_origin(user_id):
         'ORG_NAME'  : user['ORG_NAME'],
         'USE_TRGT'  : user['USE_TRGT'],
         'USE_FEE'   : user['USE_FEE'],
-        'PLAYER'    : user['PLAYER'],
+        'PLAYER'    : user['PLAYER],
         'PROGRAM'    : user['PROGRAM'],
         'ETC_DESC'   : user['ETC_DESC'],
         'ORG_LINK'   : user['ORG_LINK'],
