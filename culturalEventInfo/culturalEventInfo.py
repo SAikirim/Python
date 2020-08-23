@@ -71,7 +71,7 @@ def get_origin(user_id):
     return {
         'CODENAME'  : user['CODENAME'],
         'TITLE'     : user['TITLE'],
-        'DATE'  : user['DATE']
+        'DATE'  : user['DATE'],
         'PLACE' : user['PLACE'],
         'ORG_NAME'  : user['ORG_NAME'],
         'USE_TRGT'  : user['USE_TRGT'],
@@ -85,7 +85,7 @@ def get_origin(user_id):
         'TICKET' : user['TICKET'],
         'STRTDATE'   : user['TICKET'],
         'END_DATE'   : user['END_DATE'],
-        'THEMECODE'  : user['THEMECODE']']
+        'THEMECODE'  : user['THEMECODE']
     } if user else None
 
 def insert_prefernce(user):

@@ -1,11 +1,11 @@
-from flask      import Flask, request, jsonify, current_app
+from flask import Flask, request, jsonify
 from flask.json import JSONEncoder
-from sqlalchemy import create_engine, text
-import requests
+from os import system
 
-## Default JSON encoder는 set를 JSON으로 변환할 수 없다.
-## 그럼으로 커스텀 엔코더를 작성해서 set을 list로 변환하여
-## JSON으로 변환 가능하게 해주어야 한다.
+## Default JSON encoder는 set를 JSON으로 변환할 수 없음
+## 그러므로 커스텀 엔코더를 작성하여 set를 list로 변환 후
+## JSON으로 변환 가능하게 만들어줌
+
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, set):
@@ -14,174 +14,93 @@ class CustomJSONEncoder(JSONEncoder):
         return JSONEncoder.default(self, obj)
 
 
-def get_prefernce(user_id):
-    user = current_app.database.execute(text("""
-        SELECT
-            gender,
-            codename,
-            desired_date,
-            time,
-            use_trgt,
-            use_fee,
-            gcode,
-            keyword
-        FROM preference
-        WHERE id = :user_id
-    """), {
-        'user_id' : user_id
-    }).fetchone()
+app = Flask(__name__)
+app.id_count = 1
+app.users    = {}
+app.tweets  = []
+app.json_encoder = CustomJSONEncoder
 
-    return {
-        'gender'        : user['gender'],
-        'codename'      : user['codename'],
-        'desired_date'  : user['desired_date'],
-        'time'          : user['time'],
-        'use_trgt'      : user['use_trgt'],
-        'use_fee'       : user['use_fee'],
-        'gcode'         : user['gcode'],
-        'keyword'       : user['keyword']
-    } if user else None
+@app.route("/ping", methods=['GET'])
+def ping():
+    return "pong"
 
-def get_origin(user_id):
-    user = current_app.database.execute(text("""
-        SELECT
-            CODENAME,
-            TITLE,
-            DATE,
-            PLACE,
-            ORG_NAME,
-            USE_TRGT,
-            USE_FEE,
-            PLAYER,
-            PROGRAM,
-            ETC_DESC,
-            ORG_LINK,
-            MAIN_IMG,
-            RGSTDATE,
-            TICKET,
-            STRTDATE,
-            END_DATE,
-            THEMECODE
-        FROM origin_cultural_event_info
-        WHERE id = :user_id
-    """), {
-        'user_id' : user_id
-    }).fetchone()
+@app.route("/test", methods=['POST'])
+def test():
+    data    = request.json
+    system('export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"')
+    test1 = system('export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"; curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d @test2.json https://automl.googleapis.com/v1beta1/projects/saiki-200813/locations/us-central1/models/TBL4476826519234150400:predict')
+    #system('export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"')
+    #test1   = system('/root/Python/culturalEventInfo/test.sh')
 
-    return {
-        'CODENAME'  : user['CODENAME'],
-        'TITLE'     : user['TITLE'],
-        'DATE'  : user['DATE']
-        'PLACE' : user['PLACE'],
-        'ORG_NAME'  : user['ORG_NAME'],
-        'USE_TRGT'  : user['USE_TRGT'],
-        'USE_FEE'   : user['USE_FEE'],
-        'PLAYER'    : user['PLAYER],
-        'PROGRAM'    : user['PROGRAM'],
-        'ETC_DESC'   : user['ETC_DESC'],
-        'ORG_LINK'   : user['ORG_LINK'],
-        'MAIN_IMG'   : user['MAIN_IMG'],
-        'RGSTDATE'   : user['RGSTDATE'],
-        'TICKET' : user['TICKET'],
-        'STRTDATE'   : user['TICKET'],
-        'END_DATE'   : user['END_DATE'],
-        'THEMECODE'  : user['THEMECODE']']
-    } if user else None
+    return jsonify(test1)
 
-def insert_prefernce(user):
-    return current_app.database.execute(text("""
-        INSERT INTO preference (
-            age,
-            gender,
-            desired_date,
-            time,
-            jenre,
-            keyword
-        ) VALUES (
-            :age,
-            :gender,
-            :desired_date,
-            :time,
-            :jenre,
-            :keyword
-        )
-    """), user).lastrowid
+def sign_up():
+    new_user    = request.json
+    new_user["id"]  = app.id_count
+    app.users[app.id_count] = new_user
+    app.id_count            = app.id_count + 1
 
-def insert_origin(user):
-    return current_app.database.execute(text("""
-        INSERT INTO preference (
-            CODENAME,
-            TITLE,
-            DATE,
-            PLACE,
-            ORG_NAME,
-            USE_TRGT,
-            USE_FEE,
-            PLAYER,
-            PROGRAM,
-            ETC_DESC,
-            ORG_LINK,
-            MAIN_IMG,
-            RGSTDATE,
-            TICKET,
-            STRTDATE,
-            END_DATE,
-            THEMECODE
-        ) VALUES (
-            :CODENAME,
-            :TITLE,
-            :DATE,
-            :PLACE,
-            :ORG_NAME,
-            :USE_TRGT,
-            :USE_FEE,
-            :PLAYER,
-            :PROGRAM,
-            :ETC_DESC,
-            :ORG_LINK,
-            :MAIN_IMG,
-            :RGSTDATE,
-            :TICKET,
-            :STRTDATE,
-            :END_DATE,
-            :THEMECODE
-        )
-    """), user).rowcount
+    return jsonify(new_user)
 
-def create_app(test_config = None):
-    app = Flask(__name__)
-    app.run(host = '0.0.0.0', port = 8080)
+@app.route("/tweet", methods = ['POST'])
+def tweet():
+    payload = request.json
+    user_id = int(payload['id'])
+    tweet   = payload['tweet']
 
-    app.json_encoder = CustomJSONEncoder
+    if user_id not in app.users:
+        return '사용자가 존재하지 않습니다', 400
+    if len(tweet) > 300:
+        return '300자를 조과하였습니다', 400
 
-    if test_config is None:
-        app.config.from_pyfile("config.py")
-    else:
-        app.config.update(test_config)
+    app.tweets.append({
+        'user_id'   : user_id,
+        'tweet'     : tweet
+    })
 
-    database     = create_engine(app.config['DB_URL'], encoding = 'utf-8', max_overflow = 0)
-    app.database = database
+    return '', 200
 
-    @app.route("/ping", methods=['GET'])
-    def ping():
-        return "pong"
+@app.route("/follow", methods = ['POST'])
+def follow():
+    payload = request.json
+    user_id = int(payload['id'])
+    follow  = int(payload['follow'])
 
-    @app.route("/update", methods=['POST'])
-    def update():
-        req = requests.get('http://openapi.seoul.go.kr:8088/414a5975666b796a3132324142416376/json/culturalEventInfo/1/1')
-        originList = req.json
-        info = insert_origin(originList)
-        cinfo    = get_origin(info)
+    if user_id not in app.users or follow not in app.users:
+        return '사용자가 존재하지 않습니다', 400
 
-        return jsonify(cinfo)
+    user = app.users[user_id]
+    user.setdefault('follow', set()).add(follow)
 
-    @app.route("/preference", methods=['POST'])
-    def preference():
-        new_prefernce    = request.json
-        new_prefernce_id = insert_prefernce(new_prefernce)
-        new_prefernce    = get_prefernce(new_prefernce_id)
+    return jsonify(user)
 
-        return jsonify(new_prefernce)
+@app.route("/unfollow", methods = ['POST'])
+def unfollow():
+    payload = request.json
+    user_id = int(payload['id'])
+    follow  = int(payload['unfollow'])
 
-    return app
+    if user_id not in app.users or follow not in app.users:
+        return '사용자가 존재하지 않습니다', 400
 
+    user = app.users[user_id]
+    user.setdefault('follow', set()).discard(follow)
+    # discard() 대신 remove() 사용시 지우려는 엘리먼트가 존재하지 않으면 KeyError가 발생
+    return jsonify(user)
+
+
+@app.route("/timeline/<int:user_id>", methods = ['GET'])
+def timeline(user_id):
+    if user_id not in app.users:
+        return '사용자가 존재하지 않습니다', 400
+    follow_list = app.users[user_id].get('follow', set())
+    follow_list.add(user_id)
+    timeline = [tweet for tweet in app.tweets if tweet['user_id'] in follow_list]
+
+    return jsonify({
+        'user_id'   : user_id,
+        'timeline'  : timeline
+    })
+
+if __name__ == '__main__':
+        app.run('0.0.0.0', port=80)
