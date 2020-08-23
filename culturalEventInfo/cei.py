@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask.json import JSONEncoder
+import json
 from os import system
 
 ## Default JSON encoder는 set를 JSON으로 변환할 수 없음
@@ -20,19 +21,31 @@ app.users    = {}
 app.tweets  = []
 app.json_encoder = CustomJSONEncoder
 
-@app.route("/ping", methods=['GET'])
+@app.route("/ping", methods=['GET', 'post'])
 def ping():
-    return "pong"
+    return "pong\n"
 
-@app.route("/test", methods=['POST'])
-def test():
-    data    = request.json
-    system('export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"')
-    test1 = system('export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"; curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d @test2.json https://automl.googleapis.com/v1beta1/projects/saiki-200813/locations/us-central1/models/TBL4476826519234150400:predict')
-    #system('export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"')
-    #test1   = system('/root/Python/culturalEventInfo/test.sh')
+@app.route("/prediction", methods=['GET','POST'])
+def prediction():
+    system('export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"; curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d  @static/save.txt https://automl.googleapis.com/v1beta1/projects/saiki-200813/locations/us-central1/models/TBL4476826519234150400:predict > static/result.json')
 
-    return jsonify(test1)
+    return "request good\n"
+
+@app.route("/upload", methods=['POST'])
+def upload():
+    data   = request.json
+    with open("static/save.json","w", encoding='utf-8') as f:
+        json.dump(data, f)
+
+    return jsonify(data)
+
+@app.route("/download", methods=['GET', 'POST'])
+def download():
+    with open("static/result.json","r", encoding='utf-8') as f:
+        json_data = json.load(f)
+
+    return jsonify(json_data)
+
 
 def sign_up():
     new_user    = request.json
@@ -103,4 +116,4 @@ def timeline(user_id):
     })
 
 if __name__ == '__main__':
-        app.run('0.0.0.0', port=80)
+        app.run('0.0.0.0', port=5000, debug=True)
