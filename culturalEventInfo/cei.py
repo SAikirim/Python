@@ -46,74 +46,23 @@ def download():
 
     return jsonify(json_data)
 
+@app.route("/download2/<int:num>", methods=['GET', 'POST'])
+def download2(num):
+    with open("static/result.json","r", encoding='utf-8') as f:
+        json_data = json.load(f)
+        json_list = [[data["tables"]["score"], data["tables"]["value"]] for data in json_data["payload"]]
+        json_list.sort(reverse=True)
+        if num > 0 and num <= len(json_list):
+            jlist = [json_list[i][1] for i in range(num)]
+        else:
+            jlist = [json_list[i][1] for i in range(len(json_list))]
 
-def sign_up():
-    new_user    = request.json
-    new_user["id"]  = app.id_count
-    app.users[app.id_count] = new_user
-    app.id_count            = app.id_count + 1
-
-    return jsonify(new_user)
-
-@app.route("/tweet", methods = ['POST'])
-def tweet():
-    payload = request.json
-    user_id = int(payload['id'])
-    tweet   = payload['tweet']
-
-    if user_id not in app.users:
-        return '사용자가 존재하지 않습니다', 400
-    if len(tweet) > 300:
-        return '300자를 조과하였습니다', 400
-
-    app.tweets.append({
-        'user_id'   : user_id,
-        'tweet'     : tweet
-    })
-
-    return '', 200
-
-@app.route("/follow", methods = ['POST'])
-def follow():
-    payload = request.json
-    user_id = int(payload['id'])
-    follow  = int(payload['follow'])
-
-    if user_id not in app.users or follow not in app.users:
-        return '사용자가 존재하지 않습니다', 400
-
-    user = app.users[user_id]
-    user.setdefault('follow', set()).add(follow)
-
-    return jsonify(user)
-
-@app.route("/unfollow", methods = ['POST'])
-def unfollow():
-    payload = request.json
-    user_id = int(payload['id'])
-    follow  = int(payload['unfollow'])
-
-    if user_id not in app.users or follow not in app.users:
-        return '사용자가 존재하지 않습니다', 400
-
-    user = app.users[user_id]
-    user.setdefault('follow', set()).discard(follow)
-    # discard() 대신 remove() 사용시 지우려는 엘리먼트가 존재하지 않으면 KeyError가 발생
-    return jsonify(user)
-
-
-@app.route("/timeline/<int:user_id>", methods = ['GET'])
-def timeline(user_id):
-    if user_id not in app.users:
-        return '사용자가 존재하지 않습니다', 400
-    follow_list = app.users[user_id].get('follow', set())
-    follow_list.add(user_id)
-    timeline = [tweet for tweet in app.tweets if tweet['user_id'] in follow_list]
-
-    return jsonify({
-        'user_id'   : user_id,
-        'timeline'  : timeline
-    })
+        jdict = [{"value": i} for i in jlist]
+        res = app.response_class(
+            response = json.dumps(jdict, ensure_ascii=False),
+            mimetype='application/json'
+        )
+    return res # jsonify(jlist)
 
 if __name__ == '__main__':
         app.run('0.0.0.0', port=5000, debug=True)
