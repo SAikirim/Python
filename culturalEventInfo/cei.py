@@ -27,7 +27,7 @@ def ping():
 
 @app.route("/prediction", methods=['GET','POST'])
 def prediction():
-    system('export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"; curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d  @static/save.txt https://automl.googleapis.com/v1beta1/projects/saiki-200813/locations/us-central1/models/TBL4476826519234150400:predict > static/result.json')
+    system('export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"; curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d  @static/save.json https://automl.googleapis.com/v1beta1/projects/saiki-200813/locations/us-central1/models/TBL8603812627765788672:predict > static/result.json')
 
     return "request good\n"
 
@@ -35,7 +35,7 @@ def prediction():
 def upload():
     data   = request.json
     with open("static/save.json","w", encoding='utf-8') as f:
-        json.dump(data, f)
+        json.dump(data, f, ensure_ascii=False)
 
     return jsonify(data)
 
