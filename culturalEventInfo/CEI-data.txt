@@ -1,0 +1,46 @@
+curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d @request.json \
+https://automl.googleapis.com/v1beta1/projects/competitionseoul/locations/us-central1/models/test3_20200820044832:predict
+
+curl -X POST -H "Authorization: Bearer "$(TOKEN) -H "Content-Type: application/json; charset=utf-8" -d @test.json \
+https://automl.googleapis.com/v1beta1/projects/competitionseoul/locations/us-central1/models/TBL8642233962086793216:predict
+
+curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d '{"payload": {"row": {"values": ["무용", "강남구", "여", "유료", "온가족"]}}}' \
+https://automl.googleapis.com/v1beta1/projects/saiki-200813/locations/us-central1/models/TBL4476826519234150400:predict
+
+curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d  @/root/test2.json https://automl.googleapis.com/v1beta1/projects/saiki-200813/locations/us-central1/models/TBL4476826519234150400:predict
+
+curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d  @static/save.txt https://automl.googleapis.com/v1beta1/projects/saiki-200813/locations/us-central1/models/TBL4476826519234150400:predict
+
+curl -X POST -H "Authorization: Bearer "$(gcloud auth application-default print-access-token) -H "Content-Type: application/json; charset=utf-8" -d  @static/save.txt https://automl.googleapis.com/v1beta1/projects/saiki-200813/locations/us-central1/models/TBL4476826519234150400:predict > static/result.json
+
+export GOOGLE_APPLICATION_CREDENTIALS="/root/ce.json"
+102895577693467271860
+{
+  "payload": {
+    "row": {
+      "values": [
+        "무용", "강남구", "여", "유료", "온가족"
+      ]
+    }
+  }
+}
+
+curl -X POST -H "Content-Type: application/json" -d '{"instances": [ { "codename": "무용", "gcode": "구로구", "gender": "여", "use_fee": "유료", "use_trgt": "온가족" }]}' http://34.64.73.166:5000/predict
+curl -X POST -d @test.json http://34.64.73.166:5000/predict
+'{"payload": {"row": {"values": ["무용", "강남구", "여", "유료", "온가족"]}}}'
+'{"instances": [ { "codename": "무용", "gcode": "강남구", "gender": "여", "use_fee": "유료", "use_trgt": "온가족" }]}'
+
+gsutil cp -r gs://test-20200818/* ./download_dir
+
+## 실행
+$ FLASK_ENV=development FLASK_APP=culturalEventInfo.py flask run
+$ FLASK_ENV=development FLASK_APP=cei.py flask run
+$ nohup python cei.py runserver --host=0.0.0.0 &
+
+docker run -v `pwd`tbl/cei:/models/default/0000001 -p 5000:8080 -it gcr.io/cloud-automl-tables-public/model_server
+docker run -v `pwd`/model-export/tbl/cei:/models/default/0000001 -p 5000:8080 -it gcr.io/cloud-automl-tables-public/model_server
+sudo docker pull gcr.io/cloud-automl-tables-public/model_server 
+
+http -v post http://127.0.0.1/sign-up name=송은우 email=sonn@set.com password=test1234
+curl -X post -H "Content-Type: application/json" -d '{"payload": {"row": {"values": ["무용", "강남구", "여", "유료", "온가족"]}}}' http://127.0.0.1:5000/upload -v
+
