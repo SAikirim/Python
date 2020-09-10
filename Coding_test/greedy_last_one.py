@@ -12,7 +12,7 @@ while n != 1 :
     if n % k == 1:
         n -= 1
         num +=1
-    n /= k
+    n //= k
     num += 1
 
 
